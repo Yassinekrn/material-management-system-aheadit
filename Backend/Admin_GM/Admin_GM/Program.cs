@@ -3,34 +3,42 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<EmployeeDbContext>( o => o.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+
+builder.Services.AddDbContext<EmployeeDbContext>(options =>
+    options.UseSqlite("Data Source=erm_dev.db")
+           .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
+           .EnableSensitiveDataLogging()
+           .EnableDetailedErrors());
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<EmployeeDbContext>();
+    db.Database.Migrate();
+    SeedData.Initialize(db);
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-//-----------Cors bypass (front-end issue)-----------------
-app.UseCors(x => x
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
 
-//---------------------------------------------------------
+app.UseCors(x => x
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
-
