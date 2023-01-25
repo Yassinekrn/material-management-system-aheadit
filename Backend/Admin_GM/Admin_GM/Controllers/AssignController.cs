@@ -1,4 +1,4 @@
-﻿using Admin_GM.Data;
+using Admin_GM.Data;
 using Admin_GM.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,54 +13,92 @@ namespace Admin_GM.Controllers
         private readonly EmployeeDbContext _context;
         public AssignController(EmployeeDbContext context) => _context = context;
 
-        [HttpGet] //get all data from the table 
+        [HttpGet]
         public async Task<IEnumerable<Assign>> Get()
            => await _context.Assign.ToListAsync();
 
-        [HttpGet("{id}")] //same shit but with id, so only one row
-        [ProducesResponseType(typeof(Assign), StatusCodes.Status200OK)] //good
-        [ProducesResponseType(StatusCodes.Status404NotFound)] //bad
+        // N+1 pattern — baseline measurement before fix
+        [HttpGet("details-naive")]
+        public async Task<IActionResult> GetDetailsNaive()
+        {
+            var assigns = await _context.Assign.ToListAsync();
+            var results = new List<object>();
+            foreach (var a in assigns)
+            {
+                var emp = await _context.Employee.FindAsync(a.ID_Employee);
+                var mat = await _context.Material.FindAsync(a.ID_Material);
+                results.Add(new
+                {
+                    a.ID,
+                    EmployeeName = $"{emp?.Prename} {emp?.Name}",
+                    MaterialName = mat?.Name,
+                    a.Start_Date,
+                    a.End_Date,
+                    a.TransactionType
+                });
+            }
+            return Ok(results);
+        }
+
+        // Fixed — single query with JOINs via Include
+        [HttpGet("details")]
+        public async Task<IActionResult> GetDetails()
+        {
+            var assigns = await _context.Assign
+                .Include(a => a.Employee)
+                .Include(a => a.Material)
+                .Select(a => new
+                {
+                    a.ID,
+                    EmployeeName = a.Employee!.Prename + " " + a.Employee.Name,
+                    MaterialName = a.Material!.Name,
+                    a.Start_Date,
+                    a.End_Date,
+                    a.TransactionType
+                })
+                .ToListAsync();
+            return Ok(assigns);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Assign), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
-            var Assign = await _context.Assign.FindAsync(id);
-            return Assign == null ? NotFound() : Ok(Assign);
+            var assign = await _context.Assign.FindAsync(id);
+            return assign == null ? NotFound() : Ok(assign);
         }
 
-        [HttpPost] // add new row with data
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Create(Assign Assign)
+        public async Task<IActionResult> Create(Assign assign)
         {
-            await _context.Assign.AddAsync(Assign);
+            await _context.Assign.AddAsync(assign);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetById), new { id = Assign.ID }, Assign);
+            return CreatedAtAction(nameof(GetById), new { id = assign.ID }, assign);
         }
 
-        [HttpPut("{id}")] //delete
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update(int id, Assign Assign)
+        public async Task<IActionResult> Update(int id, Assign assign)
         {
-            if (id != Assign.ID) return BadRequest(); //checks if ID exists
-
-            _context.Entry(Assign).State = EntityState.Modified; // Modify the object in the table
+            if (id != assign.ID) return BadRequest();
+            _context.Entry(assign).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
-        [HttpDelete("{id}")] //means that the id could be found in the url
-        [ProducesResponseType(StatusCodes.Status204NoContent)] //code sent if operaion is successful
-        [ProducesResponseType(StatusCodes.Status404NotFound)]  //code sent if operaion is unsuccessful
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
-            var AssignToDelete = await _context.Assign.FindAsync(id);
-            if (AssignToDelete == null) return NotFound(); // checks wether obj exists or not
-
-            _context.Assign.Remove(AssignToDelete);
-            await _context.SaveChangesAsync(); //delete and save the obj
-
-            return NoContent(); // no return value
+            var assignToDelete = await _context.Assign.FindAsync(id);
+            if (assignToDelete == null) return NotFound();
+            _context.Assign.Remove(assignToDelete);
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
