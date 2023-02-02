@@ -1,0 +1,10 @@
+info: 6/12/2026 03:42:20.649 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "m"."Category", COUNT(*) AS "Count", COALESCE(SUM("m"."Price"), 0.0) AS "TotalValue"
+      FROM "Material" AS "m"
+      GROUP BY "m"."Category"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "m"."Category", COUNT(*) AS "Count", COALESCE(SUM("m"."Price"), 0.0) AS "TotalValue"
+      FROM "Material" AS "m"
+      GROUP BY "m"."Category"

@@ -1,0 +1,8 @@
+info: 6/12/2026 03:41:44.671 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."ID", "e"."CIN", "e"."Department", "e"."Email", "e"."Emp_Function", "e"."Home_Address", "e"."Name", "e"."Phone_Number", "e"."Prename"
+      FROM "Employee" AS "e"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."ID", "e"."CIN", "e"."Department", "e"."Email", "e"."Emp_Function", "e"."Home_Address", "e"."Name", "e"."Phone_Number", "e"."Prename"
+      FROM "Employee" AS "e"

@@ -1,0 +1,12 @@
+info: 6/12/2026 03:41:59.536 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "a"."ID", "e"."Prename" || ' ' || "e"."Name" AS "EmployeeName", "m"."Name" AS "MaterialName", "a"."Start_Date", "a"."End_Date", "a"."TransactionType"
+      FROM "Assign" AS "a"
+      INNER JOIN "Employee" AS "e" ON "a"."ID_Employee" = "e"."ID"
+      INNER JOIN "Material" AS "m" ON "a"."ID_Material" = "m"."ID"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "a"."ID", "e"."Prename" || ' ' || "e"."Name" AS "EmployeeName", "m"."Name" AS "MaterialName", "a"."Start_Date", "a"."End_Date", "a"."TransactionType"
+      FROM "Assign" AS "a"
+      INNER JOIN "Employee" AS "e" ON "a"."ID_Employee" = "e"."ID"
+      INNER JOIN "Material" AS "m" ON "a"."ID_Material" = "m"."ID"

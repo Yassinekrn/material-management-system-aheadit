@@ -1,0 +1,64 @@
+{
+  "endpoints": [
+    {
+      "avg_warm_ms": 4.0,
+      "warm_runs_ms": [
+        5,
+        4,
+        4,
+        4,
+        3
+      ],
+      "endpoint": "dashboard_stats",
+      "cold_runs_ms": [
+        36,
+        16,
+        9,
+        8,
+        7
+      ],
+      "avg_cold_ms": 15.2,
+      "url": "http://localhost:5000/api/Dashboard/stats"
+    },
+    {
+      "avg_warm_ms": 3.2,
+      "warm_runs_ms": [
+        3,
+        4,
+        4,
+        3,
+        2
+      ],
+      "endpoint": "inventory_by_category",
+      "cold_runs_ms": [
+        9,
+        7,
+        7,
+        8,
+        6
+      ],
+      "avg_cold_ms": 7.4,
+      "url": "http://localhost:5000/api/Dashboard/inventory-by-category"
+    },
+    {
+      "avg_warm_ms": 3.0,
+      "warm_runs_ms": [
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "endpoint": "employees_by_department",
+      "cold_runs_ms": [
+        8,
+        7,
+        19,
+        8,
+        10
+      ],
+      "avg_cold_ms": 10.4,
+      "url": "http://localhost:5000/api/Dashboard/employees-by-department"
+    }
+  ]
+}
