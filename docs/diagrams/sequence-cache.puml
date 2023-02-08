@@ -1,0 +1,29 @@
+@startuml Cache-Aside-Sequence
+!theme plain
+skinparam sequenceMessageAlign center
+
+participant "Client" as C
+participant "ASP.NET Core API" as API
+participant "Redis Cache" as R #LightBlue
+participant "SQLite via EF Core" as DB #LightYellow
+
+C -> API : GET /api/Dashboard/stats
+
+API -> R : GetStringAsync("dashboard:stats")
+
+alt Cache HIT (avg 4ms)
+  R --> API : JSON payload
+  API --> C : 200 OK
+else Cache MISS (avg 15ms)
+  R --> API : null
+  API -> DB : SELECT COUNT(*) FROM Employee
+  DB --> API : 300
+  API -> DB : SELECT SUM(Price) FROM Material
+  DB --> API : 1,243,750.00
+  API -> DB : SELECT COUNT(*) FROM HRRecord WHERE Status='Pending'
+  DB --> API : 12
+  API -> R : SetStringAsync(key, data, TTL=60s)
+  API --> C : 200 OK
+end
+
+@enduml

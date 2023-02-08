@@ -1,0 +1,53 @@
+@startuml ERM-Class-Diagram
+!theme plain
+skinparam classAttributeIconSize 0
+
+class Employee {
+  + ID : int
+  + Name : string
+  + Prename : string
+  + CIN : string
+  + Email : string
+  + Phone_Number : string
+  + Home_Address : string
+  + Emp_Function : string
+  + Department : string
+}
+
+class Material {
+  + ID : int
+  + Name : string
+  + Price : double
+  + Purchase_Date : DateTime
+  + Brand : string
+  + Reference : string
+  + IsTaken : int
+  + Category : string
+}
+
+class Assign {
+  + ID : int
+  + ID_Employee : int
+  + ID_Material : int
+  + Start_Date : DateTime
+  + End_Date : DateTime
+  + TransactionType : string
+  + Employee : Employee?
+  + Material : Material?
+}
+
+class HRRecord {
+  + ID : int
+  + ID_Employee : int
+  + Type : string
+  + Description : string
+  + Date : DateTime
+  + Status : string
+  + Employee : Employee?
+}
+
+Employee "1" --> "0..*" Assign : <<assigned>>
+Material "1" --> "0..*" Assign : <<assigned to>>
+Employee "1" --> "0..*" HRRecord : <<has>>
+
+@enduml

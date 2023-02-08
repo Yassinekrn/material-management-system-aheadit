@@ -1,0 +1,54 @@
+@startuml ERM-ER-Diagram
+!theme plain
+skinparam linetype ortho
+
+entity "Employee" as emp {
+  * ID : INT <<PK>>
+  --
+  Name : VARCHAR(100)
+  Prename : VARCHAR(100)
+  CIN : CHAR(8)
+  Email : VARCHAR(150)
+  Phone_Number : VARCHAR(20)
+  Home_Address : VARCHAR(255)
+  Emp_Function : VARCHAR(200)
+  Department : VARCHAR(50)
+}
+
+entity "Material" as mat {
+  * ID : INT <<PK>>
+  --
+  Name : VARCHAR(100)
+  Price : DOUBLE
+  Purchase_Date : DATETIME
+  Brand : VARCHAR(100)
+  Reference : VARCHAR(100)
+  IsTaken : INT
+  Category : VARCHAR(50)
+}
+
+entity "Assign" as asgn {
+  * ID : INT <<PK>>
+  --
+  ID_Employee : INT <<FK>>
+  ID_Material : INT <<FK>>
+  Start_Date : DATETIME
+  End_Date : DATETIME
+  TransactionType : VARCHAR(20)
+}
+
+entity "HRRecord" as hr {
+  * ID : INT <<PK>>
+  --
+  ID_Employee : INT <<FK>>
+  Type : VARCHAR(50)
+  Description : TEXT
+  Date : DATETIME
+  Status : VARCHAR(20)
+}
+
+emp ||--o{ asgn : "is assigned"
+mat ||--o{ asgn : "assigned in"
+emp ||--o{ hr : "has"
+
+@enduml

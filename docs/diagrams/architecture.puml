@@ -1,0 +1,41 @@
+@startuml ERM-Architecture
+!theme plain
+skinparam componentStyle rectangle
+skinparam linetype ortho
+
+package "Client" {
+  [Angular Frontend] as FE
+}
+
+package "ASP.NET Core API" {
+  [EmployeeController] as EC
+  [MaterialController] as MC
+  [AssignController] as AC
+  [DashboardController] as DC
+}
+
+package "Data Layer" {
+  [EmployeeDbContext\n(EF Core 9)] as CTX
+  database "SQLite\n(erm_dev.db)" as DB
+}
+
+package "Cache Layer" {
+  [IDistributedCache\n(StackExchange.Redis)] as CACHE
+  database "Redis\nlocalhost:6379" as REDIS
+}
+
+FE --> EC : REST / JSON
+FE --> MC : REST / JSON
+FE --> AC : REST / JSON
+FE --> DC : REST / JSON
+
+EC --> CTX
+MC --> CTX
+AC --> CTX
+DC --> CTX
+DC --> CACHE
+
+CTX --> DB
+CACHE --> REDIS
+
+@enduml
