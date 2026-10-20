@@ -4,8 +4,35 @@
 
 # ERM Platform — AHEADIT Group
 
-> **Employee Resource Management** web application built during an internship at AHEADIT Group (January–February 2023).
-> Full-stack platform for managing employee records, equipment inventory, material assignments, and HR workflows.
+> **Employee Resource Management** app I built as an intern at AHEADIT Group (January–February 2023), then rebuilt in 2026.
+> It manages employee records, equipment inventory, material assignments and HR records.
+
+---
+
+## History: 2023 internship → 2026 rebuild
+
+**This repository is the 2026 rebuild of the backend.** The code I wrote during the internship is kept unchanged in two repositories:
+
+- [Enterprise-Resource-Management-System](https://github.com/Yassinekrn/Enterprise-Resource-Management-System): the 2023 backend and frontend
+- [CRUD-Web-App-Material-Managment-Front-End](https://github.com/Yassinekrn/CRUD-Web-App-Material-Managment-Front-End): the 2023 Angular frontend on its own
+
+| | 2023 (internship) | 2026 (rebuild, this repo) |
+| --- | --- | --- |
+| Runtime | .NET 6 | .NET 10 |
+| ORM | EF Core 7 | EF Core 9 with migrations |
+| Database | SQL Server Express, schema run by hand from [`tables.sql`](legacy-2023/tables.sql) | SQLite, created and seeded on first run |
+| API | Employee, Material, Assign, Login controllers | same, plus a Dashboard controller and HR records |
+| Caching | none | Redis cache-aside on the dashboard endpoints (60 s TTL) |
+| Seed data | none | Bogus, deterministic (seed 42) |
+| API docs | Swashbuckle 6 | Swashbuckle 7 |
+| Frontend | Angular 15 | the 2023 Angular 15 frontend, not migrated |
+
+What the rebuild measured ([raw data](measurements/METRICS.md)):
+
+- **N+1 fix:** the assignment details endpoint went from 313 queries per request to 1 (eager loading with `Include`).
+- **Redis caching:** dashboard endpoints answer up to 3.8× faster warm than cold (15.2 ms → 4.0 ms on `/api/Dashboard/stats`).
+
+> **About the commit dates:** the rebuild was written in June 2026, but its commits were dated to the internship period (January–February 2023) when they were pushed. The EF migration name (`20260612…_Init`) shows the real date. For code actually written in 2023, see the two repositories above.
 
 ---
 
@@ -13,10 +40,10 @@
 
 | Layer     | Technology                                              |
 | --------- | ------------------------------------------------------- |
-| Backend   | ASP.NET Core 10 (C#) · Entity Framework Core 9 · SQLite |
+| Backend   | ASP.NET Core 10 (C#) · Entity Framework Core 9 · SQLite (2026 rebuild) |
 | Caching   | Redis · StackExchange.Redis · `IDistributedCache`       |
 | Seed data | Bogus                                                   |
-| Frontend  | Angular · TypeScript · Node.js                          |
+| Frontend  | Angular 15 · TypeScript (2023, separate repository) |
 | API Docs  | Swagger / OpenAPI                                       |
 
 ---
@@ -219,8 +246,9 @@ API runs at `http://localhost:5000`. Swagger UI at `http://localhost:5000/swagge
 
 ### Frontend
 
+The frontend is the 2023 Angular 15 app from the internship, kept in [CRUD-Web-App-Material-Managment-Front-End](https://github.com/Yassinekrn/CRUD-Web-App-Material-Managment-Front-End). Clone it, then:
+
 ```bash
-cd gestionAdmin
 npm install
 ng serve -o
 ```
@@ -358,5 +386,5 @@ Render with [PlantUML](https://plantuml.com/) or the VS Code PlantUML extension.
 
 ## License
 
-Developed during an internship at **AHEADIT Group**.
+Originally developed during an internship at **AHEADIT Group** (2023); rebuilt in 2026.
 See [LICENSE](LICENSE) for details.
